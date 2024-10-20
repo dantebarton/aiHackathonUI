@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Generated Watermark</title>
+    <style>
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .custom-input {
+            width: 350px;
+            height: 150px;
+            margin-bottom: 20px;
+        }
+        .button-container {
+            display: flex;          /* Use flexbox for buttons */
+            justify-content: center; /* Center the buttons horizontally */
+        }
+        .custom-button {
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            margin: 5px; /* Add margin for spacing */
+            transition: background-color 0.3s ease;
+        }
+        /* Different colors for each button */
+        .generate-button {
+            background-color: green; /* Generate button color */
+        }
+        .analyze-button {
+            background-color: blue;  /* Analyze button color */
+        }
+
+        .generate-button:hover {
+            background-color: darkgreen;
+        }
+
+        .analyze-button:hover {
+            background-color: darkblue;
+        }
+        .result-box {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f3f3f3;
+            border-radius: 10px;
+            width: 80%;
+            word-wrap: break-word;
+        }
+        .progress-container {
+            width: 10%;
+            background-color: #f3f3f3;
+            border-radius: 25px;
+            margin-top: 20px;
+        }
+        .progress-bar {
+            height: 30px;
+            width: 0%;
+            background-color: green;
+            text-align: center;
+            line-height: 30px;
+            color: blue;
+            border-radius: 25px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Watermark Your Text</h1>
+    <form method="POST" class="form-container">
+        <textarea name="user_input" placeholder="Enter input here" class="custom-input"></textarea>
+        <div class="button-container">
+            <!-- Buttons with different colors -->
+            <button type="submit" class="custom-button generate-button">Generate</button>
+            <button type="submit" class="custom-button analyze-button">Analyze</button>
+        </div>
+    </form>
+
+    <!-- Display watermarked and unwatermarked text -->
+    {% if watermarked_text %}
+        <div class="result-box">
+            <h3>Watermarked Text</h3>
+            <p>{{ watermarked_text }}</p>
+        </div>
+    {% endif %}
+
+    {% if unwatermarked_text %}
+        <div class="result-box">
+            <h3>Unwatermarked Text</h3>
+            <p>{{ unwatermarked_text }}</p>
+        </div>
+    {% endif %}
+
+    <!-- Progress bar to display watermark score -->
+    {% if watermark_score is not none %}
+        <div class="progress-container">
+            <div class="progress-bar" style="width: 50%;">
+                {{ watermark_score }}%
+            </div>
+        </div>
+    {% endif %}
+</body>
+</html>
