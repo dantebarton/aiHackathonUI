@@ -16,31 +16,34 @@
             margin-bottom: 20px;
         }
         .button-container {
-            display: flex;          /* Use flexbox for buttons */
-            justify-content: center; /* Center the buttons horizontally */
+            display: flex;
+            justify-content: center;
         }
         .custom-button {
             color: white;
             padding: 10px 20px;
             border: none;
             cursor: pointer;
-            margin: 5px; /* Add margin for spacing */
+            margin: 5px;
             transition: background-color 0.3s ease;
         }
-        /* Different colors for each button */
         .generate-button {
-            background-color: green; /* Generate button color */
+            background-color: green;
         }
         .analyze-button {
-            background-color: blue;  /* Analyze button color */
+            background-color: blue;
         }
-
+        .clear-button {
+            background-color: red;
+        }
         .generate-button:hover {
             background-color: darkgreen;
         }
-
         .analyze-button:hover {
             background-color: darkblue;
+        }
+        .clear-button:hover {
+            background-color: darkred;
         }
         .result-box {
             margin-top: 20px;
@@ -51,7 +54,7 @@
             word-wrap: break-word;
         }
         .progress-container {
-            width: 10%;
+            width: 80%;  /* Adjusted for better visibility */
             background-color: #f3f3f3;
             border-radius: 25px;
             margin-top: 20px;
@@ -62,44 +65,63 @@
             background-color: green;
             text-align: center;
             line-height: 30px;
-            color: blue;
+            color: white;  /* Changed text color to white for better contrast */
             border-radius: 25px;
         }
     </style>
 </head>
 <body>
-    <h1>Watermark Your Text</h1>
+    <h1>Evaluate your contribution</h1>
     <form method="POST" class="form-container">
         <textarea name="user_input" placeholder="Enter input here" class="custom-input"></textarea>
         <div class="button-container">
-            <!-- Buttons with different colors -->
-            <button type="submit" class="custom-button generate-button">Generate</button>
-            <button type="submit" class="custom-button analyze-button">Analyze</button>
+            <button type="submit" name="action" value="generate" class="custom-button generate-button">Generate</button>
+            <button type="submit" name="action" value="analyze" class="custom-button analyze-button">Analyze</button>
+            <button type="submit" name="action" value="clear" class="custom-button clear-button">Clear</button>
         </div>
+
+        <!-- Hidden input to store the watermarked text -->
+        {% if watermarked_text %}
+            <input type="hidden" name="watermarked_text" value="{{ watermarked_text }}">
+        {% endif %}
     </form>
 
-    <!-- Display watermarked and unwatermarked text -->
-    {% if watermarked_text %}
+    <!-- Display watermarked text -->
+    {% if request.method == "POST" and request.form.get("action") == "generate" and watermarked_text %}
         <div class="result-box">
-            <h3>Watermarked Text</h3>
+            <h3>Output: </h3>
             <p>{{ watermarked_text }}</p>
         </div>
     {% endif %}
 
-    {% if unwatermarked_text %}
-        <div class="result-box">
-            <h3>Unwatermarked Text</h3>
-            <p>{{ unwatermarked_text }}</p>
-        </div>
-    {% endif %}
+    <!-- Display progress bar and visualization when "Analyze" is clicked -->
+    {% if request.method == "POST" and request.form.get("action") == "analyze" %}
 
-    <!-- Progress bar to display watermark score -->
-    {% if watermark_score is not none %}
+        <div class="result-box">
+            <h3>Output: </h3>
+            <p>{{ watermarked_text if watermarked_text else user_input }}</p>
+        </div>
+
         <div class="progress-container">
-            <div class="progress-bar" style="width: 50%;">
-                {{ watermark_score }}%
+            <div class="progress-bar" style="width:  50%;">
+                AI contribution: {{ watermark_score }}%
             </div>
         </div>
+
+        {% if human_score is not none %}
+            <div class="progress-container">
+                <div class="progress-bar" style="width: 50%;">
+                    Human contribution: {{ human_score }}%
+                </div>
+            </div>
+        {% endif %}
+
+        {% if watermarked_img_path %}
+            <div class="result-box">
+                <h3>Watermarked Text Visualization</h3>
+                <img src="{{ watermarked_img_path }}" alt="Watermarked Text Visualization" style="max-width: 100%; height: auto;">
+            </div>
+        {% endif %}
     {% endif %}
 </body>
 </html>
